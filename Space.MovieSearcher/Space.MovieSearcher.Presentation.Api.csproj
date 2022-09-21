@@ -5,4 +5,17 @@
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="6.0.9">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Space.MovieSearcher.Application\Space.MovieSearcher.Application.csproj" />
+    <ProjectReference Include="..\Space.MovieSearcher.Infrastructure\Space.MovieSearcher.Infrastructure.csproj" />
+  </ItemGroup>
+
 </Project>
