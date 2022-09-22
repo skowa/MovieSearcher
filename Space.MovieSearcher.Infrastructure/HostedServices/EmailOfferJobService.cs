@@ -27,7 +27,7 @@ public class EmailOfferJobService : BackgroundService
             await Task.Delay(nextJobRun.Value - DateTime.UtcNow, cancellationToken);
 
             using var scope = _serviceScopeFactory.CreateScope();
-            await scope.ServiceProvider.GetRequiredService<IOffersService>().SendEmailOffersAsync();
+            await scope.ServiceProvider.GetRequiredService<IOffersService>().SendEmailOffersAsync(cancellationToken);
         }
     }
 }

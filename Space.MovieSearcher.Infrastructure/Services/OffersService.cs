@@ -33,18 +33,18 @@ public class OffersService : IOffersService
         _smtpSettings = smtpSettings.Value;
     }
 
-    public async Task SendEmailOffersAsync()
+    public async Task SendEmailOffersAsync(CancellationToken cancellationToken = default)
     {
-        IReadOnlyList<WatchlistMovie> unwatchedWatchlistMovies = await _watchlistMovieRepository.GetUnwatchedMoviesAsync();
+        IReadOnlyList<WatchlistMovie> unwatchedWatchlistMovies = await _watchlistMovieRepository.GetUnwatchedMoviesAsync(cancellationToken);
 
         IDictionary<int, List<WatchlistMovie>> usersMovies = unwatchedWatchlistMovies
             .GroupBy(movie => movie.Watchlist.UserId)
-        .Where(userMovies => userMovies.Count() > MinimumUnwatchedMoviesAmount)
+            .Where(userMovies => userMovies.Count() > MinimumUnwatchedMoviesAmount)
             .ToDictionary(userMovies => userMovies.Key, userMovies => userMovies.ToList());
 
         foreach (var userMovies in usersMovies)
         {
-            IReadOnlyList<ImdbMovieDetails> moviesDetails = await GetMoviesDetailsAsync(userMovies.Value);
+            IReadOnlyList<ImdbMovieDetails> moviesDetails = await GetMoviesDetailsAsync(userMovies.Value, cancellationToken);
 
             var offer = moviesDetails.MaxBy(movie => movie.ImdbRating);
             if (offer is not null)
@@ -52,20 +52,21 @@ public class OffersService : IOffersService
                 await _emailService.SendAsync(
                     _smtpSettings.ReceivingEmail,
                     "Movie offer",
-                    $"<h1>{offer.Title} (Imdb rating: {offer.ImdbRating})</h1></br>{offer.Wikipedia.PlotShort.Html}</br><img src='{offer.Image}' height='600' width='400'>"
+                    $"<h1>{offer.Title} (Imdb rating: {offer.ImdbRating})</h1></br>{offer.Wikipedia.PlotShort.Html}</br><img src='{offer.Image}' height='600' width='400'>",
+                    cancellationToken
                 );
 
                 var watchlistMovie = userMovies.Value.FirstOrDefault(movie => movie.MovieId == offer.Id);
                 if (watchlistMovie is not null)
                 {
                     watchlistMovie.LastOfferDateTime = DateTime.UtcNow;
-                    await _uow.SaveChangesAsync();
+                    await _uow.SaveChangesAsync(cancellationToken);
                 }
             }
         }
     }
 
-    private async Task<IReadOnlyList<ImdbMovieDetails>> GetMoviesDetailsAsync(IReadOnlyList<WatchlistMovie> watchlistMovies)
+    private async Task<IReadOnlyList<ImdbMovieDetails>> GetMoviesDetailsAsync(IReadOnlyList<WatchlistMovie> watchlistMovies, CancellationToken cancellationToken = default)
     {
         var moviesDetails = new List<ImdbMovieDetails>(watchlistMovies.Count);
         foreach (WatchlistMovie movie in watchlistMovies)
@@ -73,7 +74,7 @@ public class OffersService : IOffersService
             // Amount of days depends on business requirements, that are unclear from tech task description.
             if (movie.LastOfferDateTime < DateTime.UtcNow - TimeSpan.FromDays(OfferDelayInDays))
             {
-                moviesDetails.Add(await _imdbMoviesProvider.GetMovieDetailsAsync(movie.MovieId));
+                moviesDetails.Add(await _imdbMoviesProvider.GetMovieDetailsAsync(movie.MovieId, cancellationToken));
             }
         }
 

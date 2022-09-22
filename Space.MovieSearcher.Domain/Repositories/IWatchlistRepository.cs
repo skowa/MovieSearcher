@@ -2,5 +2,5 @@
 
 public interface IWatchlistRepository
 {
-    Task<IReadOnlyList<Watchlist>> GetAsync(int userId);
+    Task<IReadOnlyList<Watchlist>> GetAsync(int userId, CancellationToken cancellationToken = default);
 }

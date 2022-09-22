@@ -4,5 +4,5 @@ namespace Space.MovieSearcher.Application.Services.Contracts;
 
 public interface IMoviesService
 {
-    Task<IReadOnlyList<MovieModel>> GetAsync(string title);
+    Task<IReadOnlyList<MovieModel>> GetAsync(string title, CancellationToken cancellationToken = default);
 }

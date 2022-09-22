@@ -4,9 +4,9 @@ namespace Space.MovieSearcher.Application.Services.Contracts;
 
 public interface IWatchlistsService
 {
-    Task<IReadOnlyList<WatchlistMovieModel>> GetMoviesAsync(int userId);
+    Task<IReadOnlyList<WatchlistMovieModel>> GetMoviesAsync(int userId, CancellationToken cancellationToken = default);
 
-    Task AddMovieToWatchlistAsync(int userId, string movieId);
+    Task AddMovieToWatchlistAsync(int userId, string movieId, CancellationToken cancellationToken = default);
 
-    Task MarkMovieAsWatchedAsync(int userId, string movieId);
+    Task MarkMovieAsWatchedAsync(int userId, string movieId, CancellationToken cancellationToken = default);
 }

@@ -13,9 +13,9 @@ public class MoviesService : IMoviesService
         _imdbMoviesProvider = imdbMoviesProvider;
     }
 
-    public async Task<IReadOnlyList<MovieModel>> GetAsync(string title)
+    public async Task<IReadOnlyList<MovieModel>> GetAsync(string title, CancellationToken cancellationToken = default)
     {
-        return (await _imdbMoviesProvider.GetAsync(title))
+        return (await _imdbMoviesProvider.GetAsync(title, cancellationToken))
             .Select(imdbMovie => new MovieModel
             {
                 Id = imdbMovie.Id,

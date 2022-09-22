@@ -16,9 +16,9 @@ public class MoviesController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<IActionResult> Get(string title)
+    public async Task<IActionResult> Get(string title, CancellationToken cancellationToken)
     {
-        IEnumerable<MovieModel> movies = await _moviesService.GetAsync(title);
+        IEnumerable<MovieModel> movies = await _moviesService.GetAsync(title, cancellationToken);
 
         return Ok(movies);
     }

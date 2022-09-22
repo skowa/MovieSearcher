@@ -21,9 +21,9 @@ public class WatchlistsService : IWatchlistsService
         _watchlistRepository = watchlistRepository;
     }
 
-    public async Task AddMovieToWatchlistAsync(int userId, string movieId) // duplication
+    public async Task AddMovieToWatchlistAsync(int userId, string movieId, CancellationToken cancellationToken = default) // duplication
     {
-        Watchlist watchlist = (await _watchlistRepository.GetAsync(userId)).SingleOrDefault()
+        Watchlist watchlist = (await _watchlistRepository.GetAsync(userId, cancellationToken)).SingleOrDefault()
             ?? new Watchlist { UserId = userId };
 
         _watchlistMovieRepository.Add(new WatchlistMovie
@@ -32,12 +32,12 @@ public class WatchlistsService : IWatchlistsService
             Watchlist = watchlist
         });
 
-        await _uow.SaveChangesAsync();
+        await _uow.SaveChangesAsync(cancellationToken);
     }
 
-    public async Task<IReadOnlyList<WatchlistMovieModel>> GetMoviesAsync(int userId)
+    public async Task<IReadOnlyList<WatchlistMovieModel>> GetMoviesAsync(int userId, CancellationToken cancellationToken = default)
     {
-        return (await _watchlistMovieRepository.GetAsync(userId))
+        return (await _watchlistMovieRepository.GetAsync(userId, cancellationToken))
             .Select(watchlistMovie => new WatchlistMovieModel
             {
                 IsMovieWatched = watchlistMovie.IsMovieWatched,
@@ -46,9 +46,9 @@ public class WatchlistsService : IWatchlistsService
             .ToArray();
     }
 
-    public async Task MarkMovieAsWatchedAsync(int userId, string movieId)
+    public async Task MarkMovieAsWatchedAsync(int userId, string movieId, CancellationToken cancellationToken = default)
     {
-        WatchlistMovie watchlistMovie = (await _watchlistMovieRepository.GetAsync(movieId, userId))
+        WatchlistMovie watchlistMovie = (await _watchlistMovieRepository.GetAsync(movieId, userId, cancellationToken))
             .SingleOrDefault();
         if (watchlistMovie == null)
         {
@@ -56,6 +56,6 @@ public class WatchlistsService : IWatchlistsService
         }
 
         watchlistMovie.IsMovieWatched = true;
-        await _uow.SaveChangesAsync();
+        await _uow.SaveChangesAsync(cancellationToken);
     }
 }

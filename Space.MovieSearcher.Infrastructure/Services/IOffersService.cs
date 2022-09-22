@@ -2,5 +2,5 @@
 
 public interface IOffersService
 {
-    Task SendEmailOffersAsync();
+    Task SendEmailOffersAsync(CancellationToken cancellationToken = default);
 }

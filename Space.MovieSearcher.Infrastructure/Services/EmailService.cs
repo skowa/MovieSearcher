@@ -14,7 +14,7 @@ public class EmailService : IEmailService
         _smtpSettings = smtpSettingsOptions.Value;
     }
 
-    public async Task SendAsync(string email, string subject, string htmlMessage)
+    public async Task SendAsync(string email, string subject, string htmlMessage, CancellationToken cancellationToken = default)
     {
         var builder = new BodyBuilder { HtmlBody = htmlMessage };
 
@@ -27,16 +27,16 @@ public class EmailService : IEmailService
         emailMessage.From.Add(MailboxAddress.Parse(_smtpSettings.SenderEmail));
         emailMessage.To.Add(MailboxAddress.Parse(email));
 
-        await SendMessageAsync(emailMessage);
+        await SendMessageAsync(emailMessage, cancellationToken);
     }
 
-    private async Task SendMessageAsync(MimeMessage emailMessage)
+    private async Task SendMessageAsync(MimeMessage emailMessage, CancellationToken cancellationToken = default)
     {
         using var smtpClient = new SmtpClient();
 
-        await smtpClient.ConnectAsync(_smtpSettings.Server, _smtpSettings.Port ?? default);
-        await smtpClient.AuthenticateAsync(_smtpSettings.Username, _smtpSettings.Password);
-        await smtpClient.SendAsync(emailMessage);
-        await smtpClient.DisconnectAsync(true);
+        await smtpClient.ConnectAsync(_smtpSettings.Server, _smtpSettings.Port ?? default, cancellationToken: cancellationToken);
+        await smtpClient.AuthenticateAsync(_smtpSettings.Username, _smtpSettings.Password, cancellationToken);
+        await smtpClient.SendAsync(emailMessage, cancellationToken);
+        await smtpClient.DisconnectAsync(true, cancellationToken);
     }
 }

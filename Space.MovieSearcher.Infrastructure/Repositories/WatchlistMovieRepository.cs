@@ -18,24 +18,24 @@ public class WatchlistMovieRepository : IWatchlistMovieRepository
         return _dbSet.Add(movie).Entity;
     }
 
-    public async Task<IReadOnlyList<WatchlistMovie>> GetAsync(int userId)
+    public async Task<IReadOnlyList<WatchlistMovie>> GetAsync(int userId, CancellationToken cancellationToken = default)
     {
         return await _dbSet.Include(movie => movie.Watchlist)
             .Where(movie => movie.Watchlist.UserId == userId)
-            .ToArrayAsync();
+            .ToArrayAsync(cancellationToken);
     }
 
-    public async Task<IReadOnlyList<WatchlistMovie>> GetAsync(string movieId, int userId)
+    public async Task<IReadOnlyList<WatchlistMovie>> GetAsync(string movieId, int userId, CancellationToken cancellationToken = default)
     {
         return await _dbSet.Include(movie => movie.Watchlist)
             .Where(movie => movie.Watchlist.UserId == userId && movie.MovieId == movieId)
-            .ToArrayAsync();
+            .ToArrayAsync(cancellationToken);
     }
 
-    public async Task<IReadOnlyList<WatchlistMovie>> GetUnwatchedMoviesAsync()
+    public async Task<IReadOnlyList<WatchlistMovie>> GetUnwatchedMoviesAsync(CancellationToken cancellationToken = default)
     {
         return await _dbSet.Include(movie => movie.Watchlist)
             .Where(movie => !movie.IsMovieWatched)
-            .ToArrayAsync();
+            .ToArrayAsync(cancellationToken);
     }
 }

@@ -18,8 +18,8 @@ public class WatchlistRepository : IWatchlistRepository
         return _dbSet.Add(watchlist).Entity;
     }
 
-    public async Task<IReadOnlyList<Watchlist>> GetAsync(int userId)
+    public async Task<IReadOnlyList<Watchlist>> GetAsync(int userId, CancellationToken cancellationToken = default)
     {
-        return await _dbSet.Where(watchlist => watchlist.UserId == userId).ToArrayAsync();
+        return await _dbSet.Where(watchlist => watchlist.UserId == userId).ToArrayAsync(cancellationToken);
     }
 }

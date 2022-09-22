@@ -16,7 +16,7 @@ public class WatchlistsController : ControllerBase
     }
 
     [HttpGet("movies")]
-    public async Task<ActionResult<IReadOnlyList<WatchlistMovieModel>>> GetWatchlistMovies(int userId)
+    public async Task<ActionResult<IReadOnlyList<WatchlistMovieModel>>> GetWatchlistMovies(int userId, CancellationToken cancellationToken)
     {
         IEnumerable<WatchlistMovieModel> movies = await _watchlistsService.GetMoviesAsync(userId);
 
@@ -24,7 +24,7 @@ public class WatchlistsController : ControllerBase
     }
 
     [HttpPut("movies")]
-    public async Task<IActionResult> AddMovieToWatchlist(int userId, string movieId)
+    public async Task<IActionResult> AddMovieToWatchlist(int userId, string movieId, CancellationToken cancellationToken)
     {
         await _watchlistsService.AddMovieToWatchlistAsync(userId, movieId);
 
@@ -32,7 +32,7 @@ public class WatchlistsController : ControllerBase
     }
 
     [HttpPut("movies/{movieId}")]
-    public async Task<IActionResult> MarkMovieAsWatched(int userId, string movieId)
+    public async Task<IActionResult> MarkMovieAsWatched(int userId, string movieId, CancellationToken cancellationToken)
     {
         await _watchlistsService.MarkMovieAsWatchedAsync(userId, movieId);
 

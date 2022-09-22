@@ -21,10 +21,10 @@ public class ImdbMoviesProvider : IImdbMoviesProvider
         _imdbApiOptions = imdbApiOptions.Value;
     }
 
-    public async Task<IReadOnlyList<ImdbMovie>> GetAsync(string title)
+    public async Task<IReadOnlyList<ImdbMovie>> GetAsync(string title, CancellationToken cancellationToken = default)
     {
         var path = string.Format(SearchPath, _imdbApiOptions.Language, _imdbApiOptions.ApiKey, title);
-        var response = await _httpClient.GetFromJsonAsync<ImdbMoviesResponse>(path);
+        var response = await _httpClient.GetFromJsonAsync<ImdbMoviesResponse>(path, cancellationToken);
         if (!string.IsNullOrWhiteSpace(response?.ErrorMessage))
         {
             return Array.Empty<ImdbMovie>();
@@ -33,11 +33,11 @@ public class ImdbMoviesProvider : IImdbMoviesProvider
         return response?.Results ?? Array.Empty<ImdbMovie>();
     }
 
-    public async Task<ImdbMovieDetails> GetMovieDetailsAsync(string id)
+    public async Task<ImdbMovieDetails> GetMovieDetailsAsync(string id, CancellationToken cancellationToken = default)
     {
         var path = string.Format(MovieDetailsPath, _imdbApiOptions.Language, _imdbApiOptions.ApiKey, id);
 
-        var movieDetails = await _httpClient.GetFromJsonAsync<ImdbMovieDetails>(path);
+        var movieDetails = await _httpClient.GetFromJsonAsync<ImdbMovieDetails>(path, cancellationToken);
         if (!string.IsNullOrWhiteSpace(movieDetails.ErrorMessage))
         {
             return null;
