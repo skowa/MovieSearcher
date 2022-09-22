@@ -16,8 +16,10 @@ namespace Space.MovieSearcher.Presentation.Api
         {
             services.AddControllers();
             services.AddSwaggerGen();
+
             services.AddImdbProvider(Configuration.GetSection("Imdb").Bind);
-            services.AddInfrastrucutreServices(Configuration);
+            services.AddInfrastrucutreServices(Configuration, Configuration.GetSection("SmtpSettings").Bind);
+            services.AddHostedServices();
             services.AddApplicationServices();
         }
 

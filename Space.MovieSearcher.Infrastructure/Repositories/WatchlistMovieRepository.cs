@@ -31,4 +31,11 @@ public class WatchlistMovieRepository : IWatchlistMovieRepository
             .Where(movie => movie.Watchlist.UserId == userId && movie.MovieId == movieId)
             .ToArrayAsync();
     }
+
+    public async Task<IReadOnlyList<WatchlistMovie>> GetUnwatchedMoviesAsync()
+    {
+        return await _dbSet.Include(movie => movie.Watchlist)
+            .Where(movie => !movie.IsMovieWatched)
+            .ToArrayAsync();
+    }
 }

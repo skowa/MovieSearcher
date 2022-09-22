@@ -10,5 +10,7 @@ public class WatchlistMovie
 
     public bool IsMovieWatched { get; set; }
 
+    public DateTime? LastOfferDateTime { get; set; }
+
     public Watchlist Watchlist { get; set; }
 }

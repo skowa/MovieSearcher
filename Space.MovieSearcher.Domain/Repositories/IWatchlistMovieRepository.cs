@@ -7,4 +7,6 @@ public interface IWatchlistMovieRepository
     Task<IReadOnlyList<WatchlistMovie>> GetAsync(string movieId, int userId);
 
     WatchlistMovie Add(WatchlistMovie movie);
+
+    Task<IReadOnlyList<WatchlistMovie>> GetUnwatchedMoviesAsync();
 }
