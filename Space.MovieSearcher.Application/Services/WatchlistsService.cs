@@ -63,7 +63,7 @@ public class WatchlistsService : IWatchlistsService
     {
         WatchlistMovie watchlistMovie = (await _watchlistMovieRepository.GetAsync(movieId, userId, cancellationToken))
             .SingleOrDefault();
-        if (watchlistMovie == null)
+        if (watchlistMovie is null)
         {
             throw new NotFoundException($"Movie {movieId} for user {userId} is not found");
         }

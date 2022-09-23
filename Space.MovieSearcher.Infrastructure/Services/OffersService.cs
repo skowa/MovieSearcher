@@ -44,9 +44,14 @@ public class OffersService : IOffersService
 
         foreach (var userMovies in usersMovies)
         {
-            IReadOnlyList<ImdbMovieDetails> moviesDetails = await GetMoviesDetailsAsync(userMovies.Value, cancellationToken);
+            // Amount of days depends on business requirements, that are unclear from tech task description.
+            IReadOnlyList<ImdbMovieDetails> moviesDetails =
+                await Task.WhenAll(userMovies.Value
+                    .Where(movie => movie.LastOfferDateTime == null
+                                    || movie.LastOfferDateTime < DateTime.UtcNow - TimeSpan.FromDays(OfferDelayInDays))
+                    .Select(movie => _imdbMoviesProvider.GetMovieDetailsAsync(movie.MovieId, cancellationToken)));
 
-            var offer = moviesDetails.MaxBy(movie => movie.ImdbRating);
+            var offer = moviesDetails.Where(movie => movie is not null).MaxBy(movie => movie.ImdbRating);
             if (offer is not null)
             {
                 await _emailService.SendAsync(
@@ -64,24 +69,5 @@ public class OffersService : IOffersService
                 }
             }
         }
-    }
-
-    private async Task<IReadOnlyList<ImdbMovieDetails>> GetMoviesDetailsAsync(IReadOnlyList<WatchlistMovie> watchlistMovies, CancellationToken cancellationToken = default)
-    {
-        var moviesDetails = new List<ImdbMovieDetails>(watchlistMovies.Count);
-        foreach (WatchlistMovie movie in watchlistMovies)
-        {
-            // Amount of days depends on business requirements, that are unclear from tech task description.
-            if (movie.LastOfferDateTime < DateTime.UtcNow - TimeSpan.FromDays(OfferDelayInDays))
-            {
-                ImdbMovieDetails movieDetails = await _imdbMoviesProvider.GetMovieDetailsAsync(movie.MovieId, cancellationToken);
-                if (movieDetails is not null)
-                {
-                    moviesDetails.Add(movieDetails);
-                }
-            }
-        }
-
-        return moviesDetails;
     }
 }
