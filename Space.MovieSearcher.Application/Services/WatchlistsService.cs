@@ -1,4 +1,5 @@
-﻿using Space.MovieSearcher.Application.Models;
+﻿using Space.MovieSearcher.Application.Exceptions;
+using Space.MovieSearcher.Application.Models;
 using Space.MovieSearcher.Application.Services.Contracts;
 using Space.MovieSearcher.Domain;
 using Space.MovieSearcher.Domain.Repositories;
@@ -21,8 +22,14 @@ public class WatchlistsService : IWatchlistsService
         _watchlistRepository = watchlistRepository;
     }
 
-    public async Task AddMovieToWatchlistAsync(int userId, string movieId, CancellationToken cancellationToken = default) // duplication
+    public async Task AddMovieToWatchlistAsync(int userId, string movieId, CancellationToken cancellationToken = default)
     {
+        WatchlistMovie watchlistMovie = (await _watchlistMovieRepository.GetAsync(movieId, userId, cancellationToken)).SingleOrDefault();
+        if (watchlistMovie is not null)
+        {
+            throw new ArgumentException($"Movie {movieId} is duplicated");
+        }
+
         Watchlist watchlist = (await _watchlistRepository.GetAsync(userId, cancellationToken)).SingleOrDefault()
             ?? new Watchlist { UserId = userId };
 
@@ -37,7 +44,13 @@ public class WatchlistsService : IWatchlistsService
 
     public async Task<IReadOnlyList<WatchlistMovieModel>> GetMoviesAsync(int userId, CancellationToken cancellationToken = default)
     {
-        return (await _watchlistMovieRepository.GetAsync(userId, cancellationToken))
+        var watchlist = (await _watchlistRepository.GetAsync(userId, cancellationToken)).SingleOrDefault();
+        if (watchlist is null)
+        {
+            throw new NotFoundException($"Watchlist for user {userId} is not found");
+        }
+
+        return (await _watchlistMovieRepository.GetAsync(watchlist.Id, cancellationToken))
             .Select(watchlistMovie => new WatchlistMovieModel
             {
                 IsMovieWatched = watchlistMovie.IsMovieWatched,
@@ -52,7 +65,7 @@ public class WatchlistsService : IWatchlistsService
             .SingleOrDefault();
         if (watchlistMovie == null)
         {
-            throw new ArgumentException($"Invalid watchlist for user {userId}"); //
+            throw new NotFoundException($"Movie {movieId} for user {userId} is not found");
         }
 
         watchlistMovie.IsMovieWatched = true;

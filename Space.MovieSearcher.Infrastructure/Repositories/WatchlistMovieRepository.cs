@@ -18,10 +18,10 @@ public class WatchlistMovieRepository : IWatchlistMovieRepository
         return _dbSet.Add(movie).Entity;
     }
 
-    public async Task<IReadOnlyList<WatchlistMovie>> GetAsync(int userId, CancellationToken cancellationToken = default)
+    public async Task<IReadOnlyList<WatchlistMovie>> GetAsync(int watchlistId, CancellationToken cancellationToken = default)
     {
-        return await _dbSet.Include(movie => movie.Watchlist)
-            .Where(movie => movie.Watchlist.UserId == userId)
+        return await _dbSet
+            .Where(movie => movie.WatchlistId == watchlistId)
             .ToArrayAsync(cancellationToken);
     }
 

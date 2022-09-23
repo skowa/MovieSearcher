@@ -1,5 +1,7 @@
-﻿using Space.MovieSearcher.Application.Models;
+﻿using Space.MovieSearcher.Application.Exceptions;
+using Space.MovieSearcher.Application.Models;
 using Space.MovieSearcher.Application.Providers;
+using Space.MovieSearcher.Application.Providers.Models;
 using Space.MovieSearcher.Application.Services.Contracts;
 
 namespace Space.MovieSearcher.Application.Services;
@@ -15,7 +17,13 @@ public class MoviesService : IMoviesService
 
     public async Task<IReadOnlyList<MovieModel>> GetAsync(string title, CancellationToken cancellationToken = default)
     {
-        return (await _imdbMoviesProvider.GetAsync(title, cancellationToken))
+        IReadOnlyList<ImdbMovie> movies = await _imdbMoviesProvider.GetAsync(title, cancellationToken);
+        if (movies is null || !movies.Any())
+        {
+            throw new NotFoundException($"Movies by title {title} are not found");
+        }
+
+        return movies
             .Select(imdbMovie => new MovieModel
             {
                 Id = imdbMovie.Id,

@@ -74,7 +74,11 @@ public class OffersService : IOffersService
             // Amount of days depends on business requirements, that are unclear from tech task description.
             if (movie.LastOfferDateTime < DateTime.UtcNow - TimeSpan.FromDays(OfferDelayInDays))
             {
-                moviesDetails.Add(await _imdbMoviesProvider.GetMovieDetailsAsync(movie.MovieId, cancellationToken));
+                ImdbMovieDetails movieDetails = await _imdbMoviesProvider.GetMovieDetailsAsync(movie.MovieId, cancellationToken);
+                if (movieDetails is not null)
+                {
+                    moviesDetails.Add(movieDetails);
+                }
             }
         }
 

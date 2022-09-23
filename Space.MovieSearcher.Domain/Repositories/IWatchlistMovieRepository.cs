@@ -2,7 +2,7 @@
 
 public interface IWatchlistMovieRepository
 {
-    Task<IReadOnlyList<WatchlistMovie>> GetAsync(int userId, CancellationToken cancellationToken = default);
+    Task<IReadOnlyList<WatchlistMovie>> GetAsync(int watchlistId, CancellationToken cancellationToken = default);
 
     Task<IReadOnlyList<WatchlistMovie>> GetAsync(string movieId, int userId, CancellationToken cancellationToken = default);
 
