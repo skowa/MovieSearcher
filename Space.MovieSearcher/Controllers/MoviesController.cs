@@ -16,13 +16,13 @@ public class MoviesController : ControllerBase
         _moviesService = moviesService;
     }
 
-    [HttpGet]
+    [HttpGet("{title}")]
     [ProducesResponseType(typeof(IReadOnlyList<MovieModel>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> Get(string title, CancellationToken cancellationToken)
     {
-        IReadOnlyList<MovieModel> movies = await _moviesService.GetAsync(title, cancellationToken);
+        var movies = await _moviesService.GetAsync(title, cancellationToken);
 
         return Ok(movies);
     }

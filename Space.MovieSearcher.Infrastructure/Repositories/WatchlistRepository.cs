@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Space.MovieSearcher.Domain;
 using Space.MovieSearcher.Domain.Repositories;
+using System.Linq.Expressions;
 
 namespace Space.MovieSearcher.Infrastructure.Repositories;
 
@@ -18,8 +19,8 @@ public class WatchlistRepository : IWatchlistRepository
         return _dbSet.Add(watchlist).Entity;
     }
 
-    public async Task<IReadOnlyList<Watchlist>> GetAsync(int userId, CancellationToken cancellationToken = default)
+    public async Task<IReadOnlyList<Watchlist>> GetAsync(Expression<Func<Watchlist,bool>> filter, CancellationToken cancellationToken = default)
     {
-        return await _dbSet.Where(watchlist => watchlist.UserId == userId).ToArrayAsync(cancellationToken);
+        return await _dbSet.Where(filter).ToArrayAsync(cancellationToken);
     }
 }

@@ -3,6 +3,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Space.MovieSearcher.Application.Providers;
+using Space.MovieSearcher.Application.Services.Contracts;
 using Space.MovieSearcher.Domain.Repositories;
 using Space.MovieSearcher.Infrastructure.HostedServices;
 using Space.MovieSearcher.Infrastructure.Options;
@@ -10,7 +11,7 @@ using Space.MovieSearcher.Infrastructure.Providers;
 using Space.MovieSearcher.Infrastructure.Repositories;
 using Space.MovieSearcher.Infrastructure.Services;
 
-namespace Space.MovieSearcher.Infrastructure.Configuration
+namespace Space.MovieSearcher.Infrastructure.Extensions
 {
     public static class InfrastructureServiceCollectionExtensions
     {
@@ -30,12 +31,14 @@ namespace Space.MovieSearcher.Infrastructure.Configuration
         public static IServiceCollection AddInfrastrucutreServices(
             this IServiceCollection services,
             IConfiguration configuration,
-            Action<SmtpSettings> configure)
+            Action<SmtpSettings> configure,
+            string configureMigrationsAssembly)
         {
             services.Configure(configure);
 
             services.AddDbContext<DbContext, MoviesDbContext>(options =>
-                options.UseSqlServer(configuration.GetConnectionString("MoviesConnection")));
+                options.UseSqlServer(configuration.GetConnectionString("MoviesConnection"),
+                sqlServerOptions => sqlServerOptions.MigrationsAssembly(configureMigrationsAssembly)));
 
             services.AddScoped<IWatchlistRepository, WatchlistRepository>();
             services.AddScoped<IWatchlistMovieRepository, WatchlistMovieRepository>();
@@ -43,14 +46,16 @@ namespace Space.MovieSearcher.Infrastructure.Configuration
             services.AddScoped<IUnitOfWork, UnitOfWork>();
 
             services.AddScoped<IEmailService, EmailService>();
-            services.AddScoped<IOffersService, OffersService>();
 
             return services;
         }
 
         public static IServiceCollection AddHostedServices(
-            this IServiceCollection services)
+            this IServiceCollection services,
+            Action<EmailOfferJobSettings> configure)
         {
+            services.Configure(configure);
+
             services.AddHostedService<EmailOfferJobService>();
 
             return services;

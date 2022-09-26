@@ -17,8 +17,8 @@ public class MoviesService : IMoviesService
 
     public async Task<IReadOnlyList<MovieModel>> GetAsync(string title, CancellationToken cancellationToken = default)
     {
-        IReadOnlyList<ImdbMovie> movies = await _imdbMoviesProvider.GetAsync(title, cancellationToken);
-        if (movies is null || !movies.Any())
+        var movies = await _imdbMoviesProvider.GetAsync(title, cancellationToken);
+        if (!movies.Any())
         {
             throw new NotFoundException($"Movies by title {title} are not found");
         }

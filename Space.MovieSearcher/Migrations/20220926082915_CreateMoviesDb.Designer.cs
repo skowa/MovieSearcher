@@ -8,10 +8,10 @@ using Space.MovieSearcher.Infrastructure;
 
 #nullable disable
 
-namespace Space.MovieSearcher.Infrastructure.Migrations
+namespace Space.MovieSearcher.Presentation.Api.Migrations
 {
     [DbContext(typeof(MoviesDbContext))]
-    [Migration("20220921125411_CreateMoviesDb")]
+    [Migration("20220926082915_CreateMoviesDb")]
     partial class CreateMoviesDb
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

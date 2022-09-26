@@ -1,12 +1,10 @@
-﻿namespace Space.MovieSearcher.Domain.Repositories;
+﻿using System.Linq.Expressions;
+
+namespace Space.MovieSearcher.Domain.Repositories;
 
 public interface IWatchlistMovieRepository
 {
-    Task<IReadOnlyList<WatchlistMovie>> GetAsync(int watchlistId, CancellationToken cancellationToken = default);
-
-    Task<IReadOnlyList<WatchlistMovie>> GetAsync(string movieId, int userId, CancellationToken cancellationToken = default);
-
     WatchlistMovie Add(WatchlistMovie movie);
 
-    Task<IReadOnlyList<WatchlistMovie>> GetUnwatchedMoviesAsync(CancellationToken cancellationToken = default);
+    Task<IReadOnlyList<WatchlistMovie>> GetAsync(Expression<Func<WatchlistMovie, bool>> filter, CancellationToken cancellationToken = default);
 }

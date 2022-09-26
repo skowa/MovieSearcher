@@ -1,4 +1,4 @@
-﻿namespace Space.MovieSearcher.Infrastructure.Services;
+﻿namespace Space.MovieSearcher.Application.Services.Contracts;
 
 public interface IOffersService
 {

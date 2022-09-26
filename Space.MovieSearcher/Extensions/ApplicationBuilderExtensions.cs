@@ -8,17 +8,19 @@ namespace Space.MovieSearcher.Presentation.Api.Extensions;
 
 public static class ApplicationBuilderExtensions
 {
-    public static void UseExceptionResponsesHander(this IApplicationBuilder app)
+    public static void UseExceptionResponsesHandler(this IApplicationBuilder app, ILogger<ExceptionHandlerMiddleware> logger)
     {
-        app.UseExceptionHandler(err => err.Use(HandleError));
+        app.UseExceptionHandler(err => err.Use((ctx, next) => HandleError(ctx, next, logger)));
     }
 
-    private static async Task HandleError(HttpContext context, Func<Task> next)
+    private static async Task HandleError(HttpContext context, Func<Task> next, ILogger<ExceptionHandlerMiddleware> logger)
     {
         context.Response.ContentType = "application/json";
         var feature = context.Features.Get<IExceptionHandlerFeature>();
         if (feature is not null)
         {
+            logger.LogError(feature.Error, "Error occurred");
+
             switch (feature.Error)
             {
                 case NotFoundException:

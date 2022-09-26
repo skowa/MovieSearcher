@@ -8,7 +8,7 @@ using Space.MovieSearcher.Infrastructure;
 
 #nullable disable
 
-namespace Space.MovieSearcher.Infrastructure.Migrations
+namespace Space.MovieSearcher.Presentation.Api.Migrations
 {
     [DbContext(typeof(MoviesDbContext))]
     partial class MoviesDbContextModelSnapshot : ModelSnapshot

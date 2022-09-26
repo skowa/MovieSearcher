@@ -1,6 +1,7 @@
 ﻿using MailKit.Net.Smtp;
 using Microsoft.Extensions.Options;
 using MimeKit;
+using Space.MovieSearcher.Application.Services.Contracts;
 using Space.MovieSearcher.Infrastructure.Options;
 
 namespace Space.MovieSearcher.Infrastructure.Services;

@@ -1,8 +1,9 @@
 using FluentValidation;
 using FluentValidation.AspNetCore;
+using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.OpenApi.Models;
-using Space.MovieSearcher.Application.Configuration;
-using Space.MovieSearcher.Infrastructure.Configuration;
+using Space.MovieSearcher.Application.Extensions;
+using Space.MovieSearcher.Infrastructure.Extensions;
 using Space.MovieSearcher.Presentation.Api.Extensions;
 
 namespace Space.MovieSearcher.Presentation.Api
@@ -25,18 +26,18 @@ namespace Space.MovieSearcher.Presentation.Api
             });
 
             services.AddImdbProvider(Configuration.GetSection("Imdb").Bind);
-            services.AddInfrastrucutreServices(Configuration, Configuration.GetSection("SmtpSettings").Bind);
-            services.AddHostedServices();
-            services.AddApplicationServices();
+            services.AddInfrastrucutreServices(Configuration, Configuration.GetSection("SmtpSettings").Bind, Configuration.GetValue<string>("Migrations:Assembly"));
+            services.AddHostedServices(Configuration.GetSection("EmailOfferJob").Bind);
+            services.AddApplicationServices(Configuration.GetSection("EmailOffer").Bind);
 
             services.AddFluentValidationAutoValidation();
 
             services.AddValidatorsFromAssemblyContaining<Startup>();
         }
 
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILogger<ExceptionHandlerMiddleware> logger)
         {
-            app.UseExceptionResponsesHander();
+            app.UseExceptionResponsesHandler(logger);
 
             app.UseSwagger();
             app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "MovieSearcher v1"));

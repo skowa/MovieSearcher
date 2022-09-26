@@ -2,7 +2,7 @@
 
 #nullable disable
 
-namespace Space.MovieSearcher.Infrastructure.Migrations
+namespace Space.MovieSearcher.Presentation.Api.Migrations
 {
     public partial class CreateMoviesDb : Migration
     {

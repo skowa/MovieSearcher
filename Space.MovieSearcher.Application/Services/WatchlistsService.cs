@@ -24,13 +24,13 @@ public class WatchlistsService : IWatchlistsService
 
     public async Task AddMovieToWatchlistAsync(int userId, string movieId, CancellationToken cancellationToken = default)
     {
-        WatchlistMovie watchlistMovie = (await _watchlistMovieRepository.GetAsync(movieId, userId, cancellationToken)).SingleOrDefault();
+        var watchlistMovie = await GetWatchlistMovieAsync(userId, movieId, cancellationToken);
         if (watchlistMovie is not null)
         {
             throw new ArgumentException($"Movie {movieId} is duplicated");
         }
 
-        Watchlist watchlist = (await _watchlistRepository.GetAsync(userId, cancellationToken)).SingleOrDefault()
+        var watchlist = await GetWatchlistAsync(userId, cancellationToken)
             ?? new Watchlist { UserId = userId };
 
         _watchlistMovieRepository.Add(new WatchlistMovie
@@ -44,13 +44,13 @@ public class WatchlistsService : IWatchlistsService
 
     public async Task<IReadOnlyList<WatchlistMovieModel>> GetMoviesAsync(int userId, CancellationToken cancellationToken = default)
     {
-        var watchlist = (await _watchlistRepository.GetAsync(userId, cancellationToken)).SingleOrDefault();
+        var watchlist = await GetWatchlistAsync(userId, cancellationToken);
         if (watchlist is null)
         {
             throw new NotFoundException($"Watchlist for user {userId} is not found");
         }
 
-        return (await _watchlistMovieRepository.GetAsync(watchlist.Id, cancellationToken))
+        return (await _watchlistMovieRepository.GetAsync(movie => movie.WatchlistId == watchlist.Id, cancellationToken))
             .Select(watchlistMovie => new WatchlistMovieModel
             {
                 IsMovieWatched = watchlistMovie.IsMovieWatched,
@@ -61,8 +61,7 @@ public class WatchlistsService : IWatchlistsService
 
     public async Task MarkMovieAsWatchedAsync(int userId, string movieId, CancellationToken cancellationToken = default)
     {
-        WatchlistMovie watchlistMovie = (await _watchlistMovieRepository.GetAsync(movieId, userId, cancellationToken))
-            .SingleOrDefault();
+        var watchlistMovie = await GetWatchlistMovieAsync(userId, movieId, cancellationToken);
         if (watchlistMovie is null)
         {
             throw new NotFoundException($"Movie {movieId} for user {userId} is not found");
@@ -70,5 +69,16 @@ public class WatchlistsService : IWatchlistsService
 
         watchlistMovie.IsMovieWatched = true;
         await _uow.SaveChangesAsync(cancellationToken);
+    }
+
+    private async Task<WatchlistMovie> GetWatchlistMovieAsync(int userId, string movieId, CancellationToken cancellationToken = default)
+    {
+        return (await _watchlistMovieRepository.GetAsync(movie => movie.Watchlist.UserId == userId && movie.MovieId == movieId, cancellationToken))
+            .SingleOrDefault();
+    }
+
+    private async Task<Watchlist> GetWatchlistAsync(int userId, CancellationToken cancellationToken = default)
+    {
+        return (await _watchlistRepository.GetAsync(watchlist => watchlist.UserId == userId, cancellationToken)).SingleOrDefault();
     }
 }

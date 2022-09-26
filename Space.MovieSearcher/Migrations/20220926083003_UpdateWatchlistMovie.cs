@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace Space.MovieSearcher.Infrastructure.Migrations
+namespace Space.MovieSearcher.Presentation.Api.Migrations
 {
     public partial class UpdateWatchlistMovie : Migration
     {

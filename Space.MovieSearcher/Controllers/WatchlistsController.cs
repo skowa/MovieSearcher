@@ -21,9 +21,9 @@ public class WatchlistsController : ControllerBase
     [ProducesResponseType(typeof(IReadOnlyList<WatchlistMovieModel>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<ActionResult<IReadOnlyList<WatchlistMovieModel>>> GetWatchlistMovies(int userId, CancellationToken cancellationToken)
+    public async Task<IActionResult> GetWatchlistMovies(int userId, CancellationToken cancellationToken)
     {
-        IReadOnlyList<WatchlistMovieModel> movies = await _watchlistsService.GetMoviesAsync(userId, cancellationToken);
+        var movies = await _watchlistsService.GetMoviesAsync(userId, cancellationToken);
 
         return Ok(movies);
     }

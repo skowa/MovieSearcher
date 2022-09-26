@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Space.MovieSearcher.Domain;
 using Space.MovieSearcher.Domain.Repositories;
+using System.Linq.Expressions;
 
 namespace Space.MovieSearcher.Infrastructure.Repositories;
 
@@ -18,24 +19,10 @@ public class WatchlistMovieRepository : IWatchlistMovieRepository
         return _dbSet.Add(movie).Entity;
     }
 
-    public async Task<IReadOnlyList<WatchlistMovie>> GetAsync(int watchlistId, CancellationToken cancellationToken = default)
+    public async Task<IReadOnlyList<WatchlistMovie>> GetAsync(Expression<Func<WatchlistMovie, bool>> filter, CancellationToken cancellationToken = default)
     {
         return await _dbSet
-            .Where(movie => movie.WatchlistId == watchlistId)
-            .ToArrayAsync(cancellationToken);
-    }
-
-    public async Task<IReadOnlyList<WatchlistMovie>> GetAsync(string movieId, int userId, CancellationToken cancellationToken = default)
-    {
-        return await _dbSet.Include(movie => movie.Watchlist)
-            .Where(movie => movie.Watchlist.UserId == userId && movie.MovieId == movieId)
-            .ToArrayAsync(cancellationToken);
-    }
-
-    public async Task<IReadOnlyList<WatchlistMovie>> GetUnwatchedMoviesAsync(CancellationToken cancellationToken = default)
-    {
-        return await _dbSet.Include(movie => movie.Watchlist)
-            .Where(movie => !movie.IsMovieWatched)
+            .Where(filter)
             .ToArrayAsync(cancellationToken);
     }
 }
