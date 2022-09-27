@@ -1,0 +1,65 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Space.MovieSearcher.Presentation.Api</name>
+    </assembly>
+    <members>
+        <member name="M:Space.MovieSearcher.Presentation.Api.Controllers.MoviesController.Get(System.String,System.Threading.CancellationToken)">
+            <summary>
+            Gets all movies by title.
+            </summary>
+            <param name="title">Movie title.</param>
+            <param name="cancellationToken">Cancellation token.</param>
+            <returns>Movies by <paramref name="title"/>.</returns>
+        </member>
+        <member name="M:Space.MovieSearcher.Presentation.Api.Controllers.WatchlistsController.GetWatchlistMovies(System.Int32,System.Threading.CancellationToken)">
+            <summary>
+            Gets movies from user's watchlist.
+            </summary>
+            <param name="userId">User id.</param>
+            <param name="cancellationToken">Cancellation token.</param>
+            <returns>User's watchlist items.</returns>
+        </member>
+        <member name="M:Space.MovieSearcher.Presentation.Api.Controllers.WatchlistsController.AddMovieToWatchlist(Space.MovieSearcher.Presentation.Api.Models.WatchlistMovieAddRequest,System.Threading.CancellationToken)">
+            <summary>
+            Adds movie to user's watchlist.
+            </summary>
+            <param name="request">WatchlistMovie details.</param>
+            <param name="cancellationToken">Cancellation token.</param>
+        </member>
+        <member name="M:Space.MovieSearcher.Presentation.Api.Controllers.WatchlistsController.MarkMovieAsWatched(System.Int32,System.String,Space.MovieSearcher.Presentation.Api.Models.MarkMovieAsWatchedRequest,System.Threading.CancellationToken)">
+            <summary>
+            Sets movie as watched or unwatched.
+            </summary>
+            <param name="userId">User id.</param>
+            <param name="movieId">Movie id.</param>
+            <param name="request">Updated IsWatched field.</param>
+            <param name="cancellationToken">Cancellation token.</param>
+        </member>
+        <member name="T:Space.MovieSearcher.Presentation.Api.Models.MarkMovieAsWatchedRequest">
+            <summary>
+            Request model for changing movie to watched or unwatched.
+            </summary>
+        </member>
+        <member name="P:Space.MovieSearcher.Presentation.Api.Models.MarkMovieAsWatchedRequest.IsWatched">
+            <summary>
+            Is movie watched.
+            </summary>
+        </member>
+        <member name="T:Space.MovieSearcher.Presentation.Api.Models.WatchlistMovieAddRequest">
+            <summary>
+            Request model for adding new movie to user's watchlist.
+            </summary>
+        </member>
+        <member name="P:Space.MovieSearcher.Presentation.Api.Models.WatchlistMovieAddRequest.UserId">
+            <summary>
+            User id.
+            </summary>
+        </member>
+        <member name="P:Space.MovieSearcher.Presentation.Api.Models.WatchlistMovieAddRequest.MovieId">
+            <summary>
+            Movie id.
+            </summary>
+        </member>
+    </members>
+</doc>
