@@ -22,6 +22,7 @@ public class WatchlistMovieRepository : IWatchlistMovieRepository
     public async Task<IReadOnlyList<WatchlistMovie>> GetAsync(Expression<Func<WatchlistMovie, bool>> filter, CancellationToken cancellationToken = default)
     {
         return await _dbSet
+            .Include(movie => movie.Watchlist)
             .Where(filter)
             .ToArrayAsync(cancellationToken);
     }

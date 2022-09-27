@@ -59,7 +59,7 @@ public class WatchlistsService : IWatchlistsService
             .ToArray();
     }
 
-    public async Task MarkMovieAsWatchedAsync(int userId, string movieId, CancellationToken cancellationToken = default)
+    public async Task MarkMovieAsWatchedAsync(int userId, string movieId, bool isWatched, CancellationToken cancellationToken = default)
     {
         var watchlistMovie = await GetWatchlistMovieAsync(userId, movieId, cancellationToken);
         if (watchlistMovie is null)
@@ -67,7 +67,8 @@ public class WatchlistsService : IWatchlistsService
             throw new NotFoundException($"Movie {movieId} for user {userId} is not found");
         }
 
-        watchlistMovie.IsMovieWatched = true;
+        watchlistMovie.IsMovieWatched = isWatched;
+
         await _uow.SaveChangesAsync(cancellationToken);
     }
 

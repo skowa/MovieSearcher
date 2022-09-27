@@ -16,6 +16,12 @@ public class MoviesController : ControllerBase
         _moviesService = moviesService;
     }
 
+    /// <summary>
+    /// Gets all movies by title.
+    /// </summary>
+    /// <param name="title">Movie title.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    /// <returns>Movies by <paramref name="title"/>.</returns>
     [HttpGet("{title}")]
     [ProducesResponseType(typeof(IReadOnlyList<MovieModel>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]

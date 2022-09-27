@@ -8,5 +8,5 @@ public interface IWatchlistsService
 
     Task AddMovieToWatchlistAsync(int userId, string movieId, CancellationToken cancellationToken = default);
 
-    Task MarkMovieAsWatchedAsync(int userId, string movieId, CancellationToken cancellationToken = default);
+    Task MarkMovieAsWatchedAsync(int userId, string movieId, bool isWatched, CancellationToken cancellationToken = default);
 }

@@ -17,18 +17,30 @@ public class WatchlistsController : ControllerBase
         _watchlistsService = watchlistsService;
     }
 
+    /// <summary>
+    /// Gets movies from user's watchlist.
+    /// </summary>
+    /// <param name="userId">User id.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    /// <returns>User's watchlist items.</returns>
     [HttpGet("movies")]
     [ProducesResponseType(typeof(IReadOnlyList<WatchlistMovieModel>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> GetWatchlistMovies(int userId, CancellationToken cancellationToken)
     {
+        // UserId can be also retrieved from JWT token.
         var movies = await _watchlistsService.GetMoviesAsync(userId, cancellationToken);
 
         return Ok(movies);
     }
 
-    [HttpPut("movies")]
+    /// <summary>
+    /// Adds movie to user's watchlist.
+    /// </summary>
+    /// <param name="request">WatchlistMovie details.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    [HttpPost("movies")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -39,13 +51,20 @@ public class WatchlistsController : ControllerBase
         return Ok();
     }
 
-    [HttpPut("movies/{movieId}")]
+    /// <summary>
+    /// Sets movie as watched or unwatched.
+    /// </summary>
+    /// <param name="userId">User id.</param>
+    /// <param name="movieId">Movie id.</param>
+    /// <param name="request">Updated IsWatched field.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    [HttpPatch("movies/{movieId}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> MarkMovieAsWatched(int userId, string movieId, CancellationToken cancellationToken)
+    public async Task<IActionResult> MarkMovieAsWatched(int userId, string movieId, MarkMovieAsWatchedRequest request, CancellationToken cancellationToken)
     {
-        await _watchlistsService.MarkMovieAsWatchedAsync(userId, movieId, cancellationToken);
+        await _watchlistsService.MarkMovieAsWatchedAsync(userId, movieId, request.IsWatched, cancellationToken);
 
         return Ok();
     }

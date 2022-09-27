@@ -23,6 +23,7 @@ namespace Space.MovieSearcher.Presentation.Api
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "MovieSearcher", Version = "v1", Description = "API for searching movies" });
+                c.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, "ApiAnnotations.xml"));
             });
 
             services.AddImdbProvider(Configuration.GetSection("Imdb").Bind);
